@@ -28,6 +28,9 @@
  * This was bought to my attention by <Kuba Sztandera>
  */
 
+#define SMOOTHING_SAMPLE_SIZE 16
+uint32_t smoothingSamples[SMOOTHING_SAMPLE_SIZE];
+
 uint32_t TipThermoModel::convertTipRawADCTouV(uint16_t rawADC, bool skipCalOffset) {
   // This takes the raw ADC samples, converts these to uV
   // Then divides this down by the gain to convert to the uV on the input to the op-amp (A+B terminals)
@@ -223,6 +226,25 @@ uint32_t TipThermoModel::getTipInC(bool sampleNow) {
 
 uint32_t TipThermoModel::getTipInF(bool sampleNow) {
   uint32_t currentTipTempInF = getTipInC(sampleNow);
+  currentTipTempInF          = convertCtoF(currentTipTempInF);
+  return currentTipTempInF;
+}
+
+uint32_t TipThermoModel::getSmoothTipInC() {
+  uint32_t result = 0;
+  for (uint16_t ix = 0; ix < SMOOTHING_SAMPLE_SIZE - 1; ix++) {
+    smoothingSamples[ix + 1] = smoothingSamples[ix];
+  }
+  smoothingSamples[0] = getTipInC();
+  uint32_t result = 0;
+  for (uint16_t ix = 0; ix < SMOOTHING_SAMPLE_SIZE; ix++) {
+    result += smoothingSamples[ix];
+  }
+  return result / SMOOTHING_SAMPLE_SIZE;
+}
+
+uint32_t TipThermoModel::getSmoothTipInF() {
+  uint32_t currentTipTempInF = getSmoothTipInC();
   currentTipTempInF          = convertCtoF(currentTipTempInF);
   return currentTipTempInF;
 }

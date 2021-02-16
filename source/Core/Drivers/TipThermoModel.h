@@ -15,6 +15,10 @@ public:
   static uint32_t getTipInC(bool sampleNow = false);
   static uint32_t getTipInF(bool sampleNow = false);
 
+  // These results are smoothened for display purposes
+  static uint32_t getSmoothTipInC();
+  static uint32_t getSmoothTipInF();
+
   // Calculates the maximum temperature can can be read by the ADC range
   static uint32_t getTipMaxInC();
 

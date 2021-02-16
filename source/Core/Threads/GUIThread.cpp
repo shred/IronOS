@@ -69,10 +69,10 @@ void gui_drawTipTemp(bool symbol) {
   // Draw tip temp handling unit conversion & tolerance near setpoint
   uint32_t Temp = 0;
   if (systemSettings.temperatureInF) {
-    Temp = TipThermoModel::getTipInF();
+    Temp = TipThermoModel::getSmoothTipInF();
   } else
   {
-    Temp = TipThermoModel::getTipInC();
+    Temp = TipThermoModel::getSmoothTipInC();
   }
 
   OLED::printNumber(Temp, 3); // Draw the tip temp out
@@ -326,9 +326,9 @@ static int gui_SolderingSleepingMode(bool stayOff, bool autoStarted) {
     // draw the lcd
     uint16_t tipTemp;
     if (systemSettings.temperatureInF)
-      tipTemp = TipThermoModel::getTipInF();
+      tipTemp = TipThermoModel::getSmoothTipInF();
     else {
-      tipTemp = TipThermoModel::getTipInC();
+      tipTemp = TipThermoModel::getSmoothTipInC();
     }
 
     OLED::clearScreen();
